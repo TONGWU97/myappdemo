@@ -4,6 +4,7 @@ import Clock from './Clock';
 import Vote from './Vote';
 import BidirectionalBinding from './Bidirectional-binding';
 import FadeGradually from './FadeGradually';
+import A from './LifeCycle/A';
 // import './reset.min.css';
 
 class App extends Component {
@@ -15,6 +16,7 @@ class App extends Component {
         <Vote title='投票栏2'/> */}
         <BidirectionalBinding/>
         {/* <FadeGradually name='aaaa'/> */}
+        <A/>
       </div>
       
     );
