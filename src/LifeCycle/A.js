@@ -11,7 +11,12 @@ class A extends React.Component {
         };
     }
     componentWillMount() {
+        // 在WillMount中，如果直接的SET-STATE修改数据，会把状态信息改变后，然后RENDER和DID_MOUNT；但是如果SET-STATE是放到一个异步操作中完成（例如：定时器或者从服务器获取数据），也是先执行RENDER和DID，然后在执行这个异步操作修改状态，紧接着走修改的流程（这样和放到DID_MOUNT中没啥区别的），所以我们一般把数据请求放到DID中处理。
+        // 真实项目中的数据绑定，一般第一次组件渲染，我们都是绑定的默认数据，第二次才是绑定的从服务器获取的数据（有些需求我们需要根据数据是否存在判断显示隐藏等）
         console.log('2=WILL-MOUNT:第一次渲染之前', this.refs.HH);//第一次渲染前，没有HH undefined
+        this.setState({
+            n: 2
+        });
     }
     componentDidMount() {
         console.log('4=DID-MOUNT:第一次渲染之后', this.refs.HH);//第一次渲染后，有HH <div>
@@ -39,7 +44,7 @@ class A extends React.Component {
         }
         return true;
     }
-    componentWillUpdate() {
+    componentWillUpdate(nextProps, nextState) {
         // 里面拿到的this.state.n是更新之前的，和shouldComponentUpdate一样有两个参数
         console.log('6=组件更新之前', this.state.n, nextState);
     }
@@ -52,6 +57,29 @@ class A extends React.Component {
         return <div ref='HH'>
             {this.state.n}
         </div>
+    }
+}
+
+class B extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            n: 1
+        };
+    }
+    componentDidMount() {
+        setTimeout(() => {
+            this.setState({
+                n: 2
+            });
+        }, 3000);
+    }
+    render() {
+        // 复合组件：组件嵌套（大组件嵌套小组件）
+        return <div>
+            {/* 把父组件的状态信息作为属性传递给子组件 */}
+            <A n={this.state.n} />
+        </div>;
     }
 }
 
