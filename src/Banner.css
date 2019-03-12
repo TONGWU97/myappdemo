@@ -5,6 +5,7 @@
     height: 300px;
     overflow: hidden;
     text-align: center;
+    padding: 0;
 }
 
 .container:hover .arrow {
@@ -24,6 +25,7 @@
     float: left;
     width: 1000px;
     height: 100%;
+    list-style: none;
 }
 
 .container .wrapper li img {
@@ -80,4 +82,8 @@
 .container .arrow.arrowRight {
     right: 0;
     background-position: -50px 0;
+}
+
+ul, ol {
+    padding: 0;
 }

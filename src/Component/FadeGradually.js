@@ -1,5 +1,5 @@
 // 渐隐渐现效果，From简书@楠楠_c811
-import React, { Component } from 'react';
+import React from 'react';
 // 封装组件
 class FadeGradually extends React.Component {
     constructor(props) {

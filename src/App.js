@@ -8,6 +8,7 @@ import A from './LifeCycle/A';
 import Panel from './Component/复合组件间的信息传递';
 import Banner from './Component/Banner';
 // import './reset.min.css';
+
 let IMG_DATA = [];
 for (let i = 1; i <= 4; i++) {
   IMG_DATA.push({
@@ -16,6 +17,7 @@ for (let i = 1; i <= 4; i++) {
       pic: require(`./images/banner${i}.jpeg`)
   });
 }
+
 class App extends Component {
   render() {
     return (
