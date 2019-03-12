@@ -40,12 +40,12 @@ export default class Banner extends React.Component {
     // 控制自动轮播
     componentDidMount() {
         // 把定时器返回值挂载到实例上，方便后期清除，结束自动轮播
-        this.autoTimer = setInterval(this.autoMove,this.props.interval);
+        this.autoTimer = setInterval(this.autoMove, this.props.interval);
     }
 
     componentWillUpdate(nextProps, nextState) {
         // 边界判断：如果最新修改的step索引大于最大索引(说明此时已经是末尾了，不能向后走了)
-        if(nextState.step > this.cloneData.length - 1) {
+        if (nextState.step > this.cloneData.length - 1) {
             this.setState({
                 step: 1,
                 speed: 0
@@ -55,8 +55,8 @@ export default class Banner extends React.Component {
 
     componentDidUpdate() {
         // 只有是从克隆的第一张立即切换到真实的第一张后，我们才让其从当前的第一张运动到第二张
-        let{step, speed} = this.state;
-        if(step === 1 && speed === 0) {
+        let { step, speed } = this.state;
+        if (step === 1 && speed === 0) {
             let delayTimer = setTimeout(() => {
                 this.setState({
                     step: step + 1,
@@ -95,7 +95,14 @@ export default class Banner extends React.Component {
             {/* 焦点(点击切换图片部分) */}
             <ul className='focus'>
                 {data.map((item, index) => {
-                    return <li key={index}></li>
+                    let tempIndex = step - 1;
+                    if (step === 0) {
+                        tempIndex = data.length - 1;
+                    }
+                    if (step === (cloneData.length - 1)) {
+                        tempIndex = 0;
+                    }
+                    return <li className={tempIndex === index ? 'active' : ''} key={index} ></li>
                 })}
             </ul>
             {/* 轮播图上左右按钮 */}
