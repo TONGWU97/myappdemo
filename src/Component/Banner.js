@@ -51,6 +51,14 @@ export default class Banner extends React.Component {
                 speed: 0
             })
         }
+        // 向左边界判断：如果当前最新修改的索引已经小于零，说明不能继续向左走，我们应让其“立即”
+        // 回到倒数第二张图片位置(真实的最后一张)(STEP=CLONE-DATA.LENGTH-2)
+        if (nextState.step < 0) {
+            this.setState({
+                step: this.cloneData.length - 2,
+                speed: 0
+            })
+        }
     }
 
     componentDidUpdate() {
@@ -63,6 +71,16 @@ export default class Banner extends React.Component {
                     speed: this.props.speed
                 })
             }, 0)
+        }
+        //向左边界判断：立即回到倒数第二张后我们应让其再往回运动一张
+        if (step === this.cloneData.length - 2 && speed === 0) {
+            let delayTimer = setTimeout(() => {
+                clearTimeout(delayTimer);
+                this.setState({
+                    step: step - 1,
+                    speed: this.props.speed
+                });
+            }, 0);
         }
     }
 
@@ -80,10 +98,17 @@ export default class Banner extends React.Component {
                 left: -step * 1000 + 'px',
                 transition: `left ${speed}ms linear 0ms`
             }
-        // 轮播图整体容器
-        return <section className='container'>
+        // 轮播图整体容器,鼠标移入暂停移出继续轮播
+        return <section className={'container'}
+            onMouseEnter={this.movePause}
+            onMouseLeave={this.movePlay}
+            onClick={this.handleClick}>
             {/* 轮播图滚动播放的图片,wrapper的宽度取决于要展示图片的数量 */}
-            <ul className='wrapper' style={wrapperStyle}>
+            <ul className={'wrapper'} style={wrapperStyle}
+                // 当wrapper切换完成再去执行下一次切换任务，防止过快点击
+                onTransitionEnd={() => {
+                    this.isRun = false;
+                }}>
                 {cloneData.map((item, index) => {
                     let { title, pic } = item;
                     return <li key={index}>
@@ -95,6 +120,7 @@ export default class Banner extends React.Component {
             {/* 焦点(点击切换图片部分) */}
             <ul className='focus'>
                 {data.map((item, index) => {
+                    // 焦点对齐
                     let tempIndex = step - 1;
                     if (step === 0) {
                         tempIndex = data.length - 1;
@@ -117,4 +143,37 @@ export default class Banner extends React.Component {
             step: this.state.step + 1
         })
     }
+
+    // 自动轮播的暂停和开启
+    movePause = () => {
+        clearInterval(this.autoTimer);
+    }
+    movePlay = () => {
+        this.autoTimer = setInterval(this.autoMove, this.props.interval);
+    }
+
+    // 事件委托处理click, ev是事件对象
+    handleClick = ev => {
+        let target = ev.target,
+            targetTag = target.tagName,
+            targetClass = target.className;
+        // 左右切换按钮
+        if (targetTag === 'A' && /(^| +)arrow( +|$)/.test(targetClass)) {
+            // 防止过快点击
+            if(this.isRun) return;
+            this.isRun = true;
+            // 右按钮
+            if(targetClass.indexOf('arrowRight') >= 0) {
+                this.autoMove();
+                return;
+            }
+            // 左按钮
+            this.setState({
+                step: this.state.step - 1
+            })
+            return;
+        }
+    }
 }
+
+
